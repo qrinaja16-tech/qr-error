@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistem Sedang Dalam Perbaikan — Smart QR Review</title>
+  <link rel="icon" type="image/png" href="/icon-192.png">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background-color: #070b14;
+      color: #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Background Glow Effects */
+    .glow-top {
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 700px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, rgba(14, 165, 233, 0.1) 40%, transparent 70%);
+      filter: blur(60px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glow-bottom {
+      position: absolute;
+      bottom: -150px;
+      right: 10%;
+      width: 500px;
+      height: 350px;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, transparent 70%);
+      filter: blur(70px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Container Card */
+    .container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 640px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(51, 65, 85, 0.7);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-radius: 28px;
+      padding: 44px 36px;
+      text-align: center;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 30px rgba(99, 102, 241, 0.08);
+    }
+
+    /* Status Badge */
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px;
+      border-radius: 9999px;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: #fbbf24;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      margin-bottom: 24px;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #f59e0b;
+      border-radius: 50%;
+      position: relative;
+    }
+
+    .pulse-dot::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 2px solid #f59e0b;
+      animation: pulseRing 1.8s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+    }
+
+    @keyframes pulseRing {
+      0% { transform: scale(0.6); opacity: 1; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+
+    /* Main Icon */
+    .icon-wrapper {
+      width: 88px;
+      height: 88px;
+      margin: 0 auto 24px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(14, 165, 233, 0.1));
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.25);
+      position: relative;
+    }
+
+    .icon-wrapper svg {
+      width: 44px;
+      height: 44px;
+      color: #818cf8;
+      animation: gentleRotate 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes gentleRotate {
+      0% { transform: rotate(-8deg); }
+      100% { transform: rotate(12deg); }
+    }
+
+    /* Typography */
+    h1 {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 14px;
+      background: linear-gradient(135deg, #ffffff 30%, #cbd5e1 70%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    p.description {
+      font-size: 15px;
+      line-height: 1.65;
+      color: #94a3b8;
+      margin-bottom: 30px;
+    }
+
+    /* Maintenance Details Grid */
+    .info-card {
+      background: rgba(30, 41, 59, 0.55);
+      border: 1px solid rgba(51, 65, 85, 0.6);
+      border-radius: 18px;
+      padding: 18px 22px;
+      margin-bottom: 28px;
+      text-align: left;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 13.5px;
+    }
+
+    .info-row:not(:last-child) {
+      border-bottom: 1px solid rgba(51, 65, 85, 0.4);
+    }
+
+    .info-label {
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-value {
+      font-weight: 600;
+      color: #e2e8f0;
+    }
+
+    .info-value.active {
+      color: #38bdf8;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Action Buttons */
+    .action-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    @media (min-width: 520px) {
+      .action-group {
+        flex-direction: row;
+      }
+    }
+
+    .btn {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 13px 20px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+      color: #ffffff;
+      box-shadow: 0 6px 20px -3px rgba(79, 70, 229, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -4px rgba(79, 70, 229, 0.55);
+      background: linear-gradient(135deg, #4338ca 0%, #2563eb 100%);
+    }
+
+    .btn-secondary {
+      background: rgba(30, 41, 59, 0.7);
+      color: #cbd5e1;
+      border: 1px solid rgba(71, 85, 105, 0.6);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(51, 65, 85, 0.8);
+      color: #ffffff;
+      border-color: rgba(99, 102, 241, 0.5);
+    }
+
+    /* Auto Reload Timer */
+    .auto-reload-text {
+      margin-top: 22px;
+      font-size: 12px;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .countdown-number {
+      color: #38bdf8;
+      font-weight: 700;
+    }
+
+    /* Footer Brand */
+    footer {
+      position: relative;
+      z-index: 10;
+      margin-top: 28px;
+      text-align: center;
+      font-size: 12.5px;
+      color: #475569;
+    }
+
+    footer a {
+      color: #64748b;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    footer a:hover {
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-top"></div>
+  <div class="glow-bottom"></div>
+
+  <main class="container">
+    
+    <!-- Status Badge -->
+    <div class="badge-pill">
+      <span class="pulse-dot"></span>
+      <span>Pemeliharaan & Peningkatan Sistem</span>
+    </div>
+
+    <!-- Main Maintenance Icon -->
+    <div class="icon-wrapper">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.162 1.157-.14 1.716.14l3.14 1.57a1.5 1.5 0 001.99-1.99l-1.57-3.14a2.986 2.986 0 00-1.348-1.348l-3.14-1.57a1.5 1.5 0 00-1.99 1.99l1.57 3.14c.28.56.302 1.166.14 1.716z" />
+      </svg>
+    </div>
+
+    <!-- Headline -->
+    <h1>Sistem Sedang Ditingkatkan</h1>
+    <p class="description">
+      Kami sedang melakukan optimasi performa server, penyempurnaan keamanan, dan akselerasi database agar portal Anda berjalan jauh lebih kencang, aman, dan nyaman digunakan.
+    </p>
+
+    <!-- Details Card -->
+    <div class="info-card">
+      <div class="info-row">
+        <span class="info-label">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Status Layanan
+        </span>
+        <span class="info-value active">
+          <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#38bdf8;"></span>
+          Sedang Dikerjakan (In Progress)
+        </span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          Fokus Pembaruan
+        </span>
+        <span class="info-value">Akselerasi Kecepatan & Keamanan</span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Estimasi Waktu
+        </span>
+        <span class="info-value">Beberapa Menit Lagi</span>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-group">
+      <button onclick="window.location.reload()" class="btn btn-primary">
+        <svg width="17" height="17" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        Muat Ulang Halaman
+      </button>
+
+      <a href="https://wa.me/6285176871609?text=Halo%20Admin%2C%20saya%20ingin%20menanyakan%20status%20pemeliharaan%20sistem%20Smart%20QR%20Review" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+        <svg width="17" height="17" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+        Hubungi WhatsApp Admin
+      </a>
+    </div>
+
+    <!-- Auto Reload Countdown -->
+    <div class="auto-reload-text">
+      <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span>Pemeriksaan otomatis dalam <span id="countdown" class="countdown-number">30</span> detik</span>
+    </div>
+
+  </main>
+
+  <footer>
+    &copy; 2026 <strong>Smart QR Review</strong> &bull; Seluruh hak cipta dilindungi.
+  </footer>
+
+  <script>
+    // Countdown Timer Auto-Refresh
+    let secondsLeft = 30;
+    const countdownEl = document.getElementById('countdown');
+
+    const timer = setInterval(() => {
+      secondsLeft--;
+      if (countdownEl) {
+        countdownEl.textContent = secondsLeft;
+      }
+      if (secondsLeft <= 0) {
+        clearInterval(timer);
+        window.location.reload();
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
